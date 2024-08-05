@@ -1,11 +1,11 @@
 package test;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class LibraryUtility {
-    private static ArrayList<String> bookTitles = new ArrayList<>();
+    private static String[] bookTitles = new String[100];
+    private static int count = 0;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -57,12 +57,23 @@ public class LibraryUtility {
     }
 
     public static void addBookTitle(String title) {
-        bookTitles.add(title);
-        System.out.println("Book title added successfully.");
+        if (count < bookTitles.length) {
+            bookTitles[count] = title;
+            count++;
+            System.out.println("Book title added successfully.");
+        } else {
+            System.out.println("Library is full. Cannot add more titles.");
+        }
     }
 
     public static void removeBookTitle(String title) {
-        if (bookTitles.remove(title)) {
+        int index = findIndex(title);
+        if (index != -1) {
+            for (int i = index; i < count - 1; i++) {
+                bookTitles[i] = bookTitles[i + 1];
+            }
+            bookTitles[count - 1] = null;
+            count--;
             System.out.println("Book title removed successfully.");
         } else {
             System.out.println("Book title not found.");
@@ -70,7 +81,7 @@ public class LibraryUtility {
     }
 
     public static void searchBookTitle(String title) {
-        int index = bookTitles.indexOf(title);
+        int index = findIndex(title);
         if (index != -1) {
             System.out.println("Book title found at index: " + index);
         } else {
@@ -80,13 +91,22 @@ public class LibraryUtility {
 
     public static void listAllBookTitles() {
         System.out.println("Listing all book titles:");
-        for (String title : bookTitles) {
-            System.out.println(title);
+        for (int i = 0; i < count; i++) {
+            System.out.println(bookTitles[i]);
         }
     }
 
     public static void sortBookTitles() {
-        Collections.sort(bookTitles);
+        Arrays.sort(bookTitles, 0, count);
         System.out.println("Book titles sorted alphabetically.");
+    }
+
+    private static int findIndex(String title) {
+        for (int i = 0; i < count; i++) {
+            if (bookTitles[i].equals(title)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
